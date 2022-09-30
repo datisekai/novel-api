@@ -43,7 +43,9 @@ const HomeController = {
       $("#intro-index .index-intro .item").each(function () {
         let manga: TruyenHotType = {
           slug: $(this)?.find("a").attr("href")?.split("truyenfull.vn/")[1],
-          image: $(this)?.find("a img").attr("lazysrc"),
+          image:
+            $(this)?.find("a img").attr("lazysrc") ||
+            $(this)?.find("a img").attr("src"),
           name: $(this)?.find("a div h3").text(),
         };
         mangas.push(manga);
