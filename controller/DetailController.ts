@@ -75,7 +75,7 @@ const DetailController = {
               .querySelector("a")
               .getAttribute("href")
               .split(`${process.env.URL}`)[1],
-            name: element.querySelector("a").getAttribute("title"),
+            name: element.querySelector("a").innerText,
           });
         });
       });
