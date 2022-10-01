@@ -30,19 +30,8 @@ const DetailController = {
         categories.push(category);
       });
 
-      // const chapters = root
-      //   .querySelectorAll(".list-chapter li")
-      //   .map((item: any) => {
-      //     return {
-      //       href: item
-      //         .querySelector("a")
-      //         .getAttribute("href")
-      //         .split(`${process.env.URL}/`)[1],
-      //       name: item.querySelector("a").innerText,
-      //     };
-      //   });
-
-      const status = root.querySelector("span.text-success")?.innerText;
+      const source = infos[2].querySelector("span")?.innerText;
+      const status = infos[3].querySelector("span")?.innerText;
       let totalPage = "";
       const paginationHTML = root.querySelectorAll(".pagination li");
       paginationHTML.forEach((item: any, index: number) => {
@@ -95,9 +84,10 @@ const DetailController = {
         image,
         name,
         description,
+        source,
+        status,
         categories,
         author,
-        status,
         chapters,
         newChapters,
       });
