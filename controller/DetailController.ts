@@ -4,13 +4,12 @@ import { parse } from "node-html-parser";
 const DetailController = {
   detail: async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { page = 1 } = req.query;
     if (!id) {
       return res.status(500).json("Missing id");
     }
 
     try {
-      const url = `${process.env.URL}/${id}/trang-${page}/#list-chapter`;
+      const url = `${process.env.URL}/${id}`;
       const html = await axios(url);
       const root = parse(html.data);
 
@@ -31,17 +30,17 @@ const DetailController = {
         categories.push(category);
       });
 
-      const chapters = root
-        .querySelectorAll(".list-chapter li")
-        .map((item: any) => {
-          return {
-            href: item
-              .querySelector("a")
-              .getAttribute("href")
-              .split(`${process.env.URL}/`)[1],
-            name: item.querySelector("a").innerText,
-          };
-        });
+      // const chapters = root
+      //   .querySelectorAll(".list-chapter li")
+      //   .map((item: any) => {
+      //     return {
+      //       href: item
+      //         .querySelector("a")
+      //         .getAttribute("href")
+      //         .split(`${process.env.URL}/`)[1],
+      //       name: item.querySelector("a").innerText,
+      //     };
+      //   });
 
       const status = root.querySelector("span.text-success")?.innerText;
       let totalPage = "";
@@ -64,6 +63,34 @@ const DetailController = {
         });
       });
 
+      totalPage = totalPage.split("/#list-chapter")[0];
+
+      let chapters: any = [];
+
+      const results = await Promise.all(
+        Array.from(Array(Number(totalPage)).keys()).map(
+          async (item: number) => {
+            const currentURL = `${process.env.URL}/${
+              (id as string).split("/chuong")[0]
+            }/trang-${item + 1}/#list-chapter`;
+            const currentHtml = await axios(currentURL);
+            return parse(currentHtml.data);
+          }
+        )
+      );
+
+      results.forEach((item: any) => {
+        item.querySelectorAll(".list-chapter li").forEach((element: any) => {
+          chapters.push({
+            href: element
+              .querySelector("a")
+              .getAttribute("href")
+              .split(`${process.env.URL}`)[1],
+            name: element.querySelector("a").getAttribute("title"),
+          });
+        });
+      });
+
       return res.json({
         image,
         name,
@@ -72,7 +99,6 @@ const DetailController = {
         author,
         status,
         chapters,
-        totalPage: totalPage.split("/#list-chapter")[0],
         newChapters,
       });
     } catch (error) {
