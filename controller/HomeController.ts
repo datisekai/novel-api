@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as cheerio from "cheerio";
 import express, { Request, Response } from "express";
+import { parse } from "node-html-parser";
 
 interface TruyenHotType {
   slug?: string;
@@ -31,6 +32,14 @@ interface TruyenMoiCapNhatType {
   category?: TruyenType[];
   currentChapter?: Chapter;
   time?: string;
+}
+
+interface TruyenListType {
+  slug?: string;
+  name?: string;
+  currentChapter?: Chapter;
+  image: string;
+  author: string;
 }
 
 const HomeController = {
@@ -111,6 +120,56 @@ const HomeController = {
         };
         mangas.push(manga);
       });
+      return res.json(mangas);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json("Internal server");
+    }
+  },
+  getList: async (req: Request, res: Response) => {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(404).json("Missing id");
+    }
+    try {
+      const url = `${process.env.URL}/danh-sach/${id}`;
+      const html = await axios(url);
+      const root = parse(html.data);
+
+      const mangas: TruyenListType[] = [];
+
+      root
+        .querySelectorAll(".list-truyen .row")
+        .forEach((item: any, index: number) => {
+          if (index < 12) {
+            const manga: TruyenListType = {
+              image:
+                item
+                  .querySelector(".col-xs-3 .lazyimg")
+                  .getAttribute("data-image") ||
+                item
+                  .querySelector(".col-xs-3 .lazyimg")
+                  .getAttribute("data-desk-image"),
+              name: item.querySelector(".col-xs-7 div h3 a").innerText,
+              slug: item
+                .querySelector(".col-xs-7 div h3 a")
+                .getAttribute("href")
+                .split(process.env.URL)[1],
+              author: item.querySelector(".col-xs-7 .author").innerText,
+              currentChapter: {
+                name: item.querySelector(".col-xs-2 div a").innerText,
+                slug: item
+                  .querySelector(".col-xs-2 div a")
+                  .getAttribute("href")
+                  .split(process.env.URL)[1],
+              },
+            };
+            if (manga.image) {
+              mangas.push(manga);
+            }
+          }
+        });
+
       return res.json(mangas);
     } catch (error) {
       console.log(error);

@@ -88,7 +88,7 @@ const DetailController = {
         status,
         categories,
         author,
-        chapters,
+        chapters: chapters.reverse(),
         newChapters,
       });
     } catch (error) {
@@ -166,6 +166,8 @@ const DetailController = {
           });
         });
       });
+
+      listChapter = listChapter.reverse();
 
       return res.json(listChapter);
     } catch (err) {
