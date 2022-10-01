@@ -57,7 +57,7 @@ const DetailController = {
       let chapters: any = [];
 
       const results = await Promise.all(
-        Array.from(Array(Number(totalPage)).keys()).map(
+        Array.from(Array(Number(totalPage ? totalPage : 1)).keys()).map(
           async (item: number) => {
             const currentURL = `${process.env.URL}/${
               (id as string).split("/chuong")[0]
