@@ -128,11 +128,12 @@ const HomeController = {
   },
   getList: async (req: Request, res: Response) => {
     const { id } = req.params;
+    const { page = 1 } = req.query;
     if (!id) {
       return res.status(404).json("Missing id");
     }
     try {
-      const url = `${process.env.URL}/danh-sach/${id}`;
+      const url = `${process.env.URL}/danh-sach/${id}/trang-${page}`;
       const html = await axios(url);
       const root = parse(html.data);
 
@@ -141,15 +142,15 @@ const HomeController = {
       root
         .querySelectorAll(".list-truyen .row")
         .forEach((item: any, index: number) => {
-          if (index < 12) {
+          if (index < 27) {
             const manga: TruyenListType = {
               image:
                 item
                   .querySelector(".col-xs-3 .lazyimg")
-                  .getAttribute("data-image") ||
+                  .getAttribute("data-desk-image") ||
                 item
                   .querySelector(".col-xs-3 .lazyimg")
-                  .getAttribute("data-desk-image"),
+                  .getAttribute("data-image"),
               name: item.querySelector(".col-xs-7 div h3 a").innerText,
               slug: item
                 .querySelector(".col-xs-7 div h3 a")
@@ -169,8 +170,28 @@ const HomeController = {
             }
           }
         });
+      let totalPage = "";
+      root
+        .querySelectorAll(".pagination li")
+        .forEach((item: any, index: number) => {
+          if (
+            index < root.querySelectorAll(".pagination li").length - 1 &&
+            item.querySelector("a")
+          ) {
+            totalPage = item
+              .querySelector("a")
+              .getAttribute("href")
+              .split("trang-")[1];
+          }
+        });
 
-      return res.json(mangas);
+      totalPage = totalPage.split("/")[0];
+
+      return res.json({
+        data: mangas,
+        totalPage,
+        title: root.querySelector(".title-list h2")?.innerText,
+      });
     } catch (error) {
       console.log(error);
       return res.status(500).json("Internal server");
