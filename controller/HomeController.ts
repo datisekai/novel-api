@@ -191,6 +191,7 @@ const HomeController = {
         data: mangas,
         totalPage,
         title: root.querySelector(".title-list h2")?.innerText,
+        page,
       });
     } catch (error) {
       console.log(error);
