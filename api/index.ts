@@ -5,6 +5,7 @@ import cors from "cors";
 import HomeRoute from "../routes/Home";
 import SearchRoute from "../routes/Search";
 import DetailRoute from "../routes/Detail";
+import CategoryRoute from "../routes/Category";
 dotenv.config();
 
 const app = express();
@@ -20,6 +21,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/home", HomeRoute);
 app.use("/search", SearchRoute);
 app.use("/detail", DetailRoute);
+app.use("/category", CategoryRoute);
 
 const PORT = process.env.PORT || 6060;
 
