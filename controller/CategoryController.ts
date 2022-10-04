@@ -9,11 +9,11 @@ const CategoryController = {
       const root = parse(html.data);
       let categories: any = [];
       root.querySelectorAll(".dropdown-menu li").forEach((item: any) => {
-        const name = item
+        const slug = item
           .querySelector("a")
           .getAttribute("href")
           .split("danh-sach/")[1];
-        const slug = item.querySelector("a").innerText;
+        const name = item.querySelector("a").innerText;
         if (name && slug) {
           categories.push({ name, slug });
         }
