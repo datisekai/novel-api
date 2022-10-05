@@ -31,7 +31,9 @@ const SearchController = {
 
       $("#list-page div .list-truyen .row").each(function () {
         let manga: TruyenTimKiemType = {
-          image: $(this).find(".col-xs-3 div .lazyimg").attr("data-image"),
+          image:
+            $(this).find(".col-xs-3 div .lazyimg").attr("data-desk-image") ||
+            $(this).find(".col-xs-3 div .lazyimg").attr("data-image"),
           name: $(this).find(".col-xs-7 div h3 a").text(),
           slug: $(this)
             .find(".col-xs-7 div h3 a")
