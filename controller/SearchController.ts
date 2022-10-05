@@ -12,6 +12,7 @@ interface TruyenTimKiemType {
   name?: string;
   slug?: string;
   currentChapter?: Chapter;
+  author?: string;
 }
 
 const SearchController = {
@@ -43,6 +44,7 @@ const SearchController = {
               .attr("href")
               ?.split(`${process.env.URL}/`)[1],
           },
+          author: $(this).find(".col-xs-7 div .author").text(),
         };
         if (manga.name) {
           mangas.push(manga);
